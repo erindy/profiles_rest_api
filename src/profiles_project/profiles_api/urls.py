@@ -7,6 +7,7 @@ from . import views
 
 router = DefaultRouter()
 router.register('hello-viewset', views.HelloViewSet, base_name='hello-viewset')
+router.register('profile', views.UserProfileViewSet) # when creating a viewset based on model there is no need to create a base_name because django is able to see it itself.
 
 urlpatterns = [
     url(r'^hello-view/', views.HelloApiView.as_view()),
