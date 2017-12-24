@@ -9,6 +9,8 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework import filters
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 
 from . import serializers
 from . import models
@@ -98,23 +100,18 @@ class HelloViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         """Handles getting an object by its ID."""
-
         return Response({'http method': 'get'})
-
 
     def update(self, request, pk=None):
         """handles updating of an object"""
-
         return Response({'http method': 'put'})
 
     def partial_update(self, request, pk=None):
         """Handles updating part of an object"""
-
         return Response({'http method': 'patch'})
 
     def destroy(self, request, pk=None):
         """Handles removing of an object"""
-
         return Response({'Http_method', 'delete'})
 
 
@@ -139,6 +136,22 @@ class LoginViewSet(viewsets.ViewSet):
         """Used to obtain Authtoken APIview to validate and create a token"""
         print(str(ObtainAuthToken().post(request)))
         return ObtainAuthToken().post(request)
+
+
+class UserProfileFeedViewSet(viewsets.ModelViewSet):
+    """Handles creating, reading and updating profile feed items."""
+
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = serializers.ProfileFeedItemSerialzer
+    queryset = models.ProfileFeedItem.objects.all()
+    permission_classes = (permissions.PostOwnStatus, IsAuthenticated)
+
+    def perform_create(self, serializer):
+        """Set the user profile to the logged in user."""
+
+        serializer.save(user_profile=self.request.user)
+
+
 
 
 
